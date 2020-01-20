@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Making your first Phaser 3 Game - Part 1</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <link rel="stylesheet" href="exemple.css">
     <style type="text/css">
         body {
             margin: 0;
@@ -11,7 +12,7 @@
     </style>
 </head>
 <body>
-
+    
 <script type="text/javascript">
 
     var config = {
@@ -33,7 +34,8 @@
     };
 
     var game = new Phaser.Game(config);
-    
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create });
+
     function preload ()
     {
         this.load.image('over','assets/over.jpg');
@@ -41,23 +43,34 @@
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude', 
-        'assets/dude.png',
+    this.load.image('monkey', 'assets/monkey.jpg');
+    this.load.image('bannana', 'assets/bannana.jpg');
+    this.load.spritesheet('dude', 'assets/dude.png',
         { frameWidth: 32, frameHeight: 48 }
     );
     }
     var platforms;
     function create ()
     {
-
+ 
      //creation de la platforme   
+       //CREATION Des objets
         this.add.image(400, 300, 'sky');
-    platforms = this.physics.add.staticGroup();
+        myimage=this.add.image(50,200,'monkey');
+        myimage.width=40;
+        myimage.height=40;
 
+      mybannana=this.add.image(550,145,'bannana');
+        mybannana.width=80;
+        mybannana.height=80;
+    platforms = this.physics.add.staticGroup();
+   mybannana.inputEnabled = true;
     platforms.create(400, 568, 'ground').setScale(2).refreshBody();
     platforms.create(600, 400, 'ground');
     platforms.create(50, 250, 'ground');
+    
     platforms.create(750, 220, 'ground');
+    platforms.create(600, 375, 'bomb');
 //Creation du joueur
 player = this.physics.add.sprite(100, 450, 'dude');
 player.setBounce(0.3);
@@ -83,75 +96,12 @@ this.anims.create({
     repeat: -1
 });
 
-//ajouter les etoiles
-stars = this.physics.add.group({
-    key: 'star',
-    repeat: 11,
-    setXY: { x: 12, y: 0, stepX: 70 }
-});
-this.physics.add.collider(stars, platforms);
-this.physics.add.overlap(player, stars, collectStar, null, this);
 
 
-stars.children.iterate(function (child) {
-
-    child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
-});
-//creation de la barre de score
-var score = 0;
-var scoreText;
-scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-function collectStar (player, star)
-{
-    star.disableBody(true, true);
-
-    score += 10;
-    scoreText.setText('Score: ' + score);
-
-    if (stars.countActive(true) === 0)
-    {
-        stars.children.iterate(function (child) {
-
-            child.enableBody(true, child.x, 0, true, true);
-
-        });
-
-        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = bombs.create(x, 16, 'bomb');
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-
-    }
-}
-
-//Ajout des bombes
-bombs = this.physics.add.group();
-
-this.physics.add.collider(bombs, platforms);
-
-this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-function hitBomb (player, bomb)
-{
-    var playerText;
-    this.physics.pause();
-
-    player.setTint(0xff0000);
-
-    player.anims.play('turn');
-
-    gameOver = true;
-
-   this.add.image(400,300,'over');
-}
-    
 
 }
     function update ()
-    {
+    { /* moves player
          cursors = this.input.keyboard.createCursorKeys();
         if (cursors.left.isDown)
 {
@@ -172,15 +122,15 @@ else
 
     player.anims.play('turn');
 }
-
-if (cursors.up.isDown && player.body.touching.down)
+  b   ,
 {
     player.setVelocityY(-330);
-}
-    }
+}*/
 
+
+  
+        
 
 </script>
-
 </body>
 </html>

@@ -1,6 +1,7 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
+<!doctype html>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8" />
     <title>Making your first Phaser 3 Game - Part 3</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
@@ -10,42 +11,179 @@
         }
     </style>
 </head>
+
 <body>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    var config = {
-        type: Phaser.AUTO,
-        width: 800,
-        height: 600,
-        scene: {
-            preload: preload,
-            create: create,
-            update: update
+        var config = {
+            type: Phaser.AUTO,
+            width: 2048,
+            height: 768,
+
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        var game = new Phaser.Game(config);
+        var bunny;
+        function preload() {
+            this.load.image('sky', 'assets/sky.png');
+            this.load.image('bunny', 'assets/bunny.png');
+            this.load.image('mult','assets/mult.png');
+            this.load.image('eye','assets/eye.png');
+
         }
-    };
 
-    var game = new Phaser.Game(config);
+        function create() {
+            //set scale
+            sky = this.add.image(400, 300, 'sky');
+            sky.setScale(4);
 
-    function preload ()
-    {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    }
+            bunny = this.add.sprite(500, 500, 'bunny').setInteractive();
+            bunny.alpha = 0.5;
+            this.input.setDraggable(bunny);
 
-    function create ()
-    {
-        this.add.image(400, 300, 'sky');
-    }
+            
 
-    function update ()
-    {
-    }
+            //drag only 
+            //  The pointer has to move 16 pixels before it's considered as a drag
+            this.input.dragDistanceThreshold = 16;
 
-</script>
+        
+
+            //  A drop zone
+            var zone = this.add.zone(380, 300, 200, 200).setRectangleDropZone(200, 200);
+            var zone1 = this.add.zone(600, 300, 200, 200).setRectangleDropZone(200, 200);
+            var zone2=this.add.zone(900, 300, 200, 200).setRectangleDropZone(200, 200);
+            var zone3=this.add.zone(100, 300, 200, 200).setRectangleDropZone(200, 200);
+            var zone4=this.add.zone(1300, 300, 200, 200).setRectangleDropZone(200, 200);
+
+
+            //  Just a visual display of the drop zone
+            var graphics = this.add.graphics();
+
+            graphics.lineStyle(2, 0xffff00);
+            graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+            graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+            graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+            graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+            graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+
+            this.input.on('dragstart', function (pointer, gameObject) {
+
+                this.children.bringToTop(gameObject);
+
+            }, this);
+
+            this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+                gameObject.x = dragX;
+                gameObject.y = dragY;
+
+            });
+
+            this.input.on('dragenter', function (pointer, gameObject, dropZone) {
+
+                graphics.clear();
+                graphics.lineStyle(2, 0x00ffff);
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+              var w=gameObject.width;
+              var h=gameObject.height;
+              var r1=w/200;
+              var r2=h/200;
+              if (w>h){
+                gameObject.setScale(1/r1,1/r1);
+              }
+              else if(h>w)
+              {gameObject.setScale(1/r2,1/r2);}
+              else 
+              gameObject.setScale(1);
+              
+                console.log("Enter zone :"+pointer.x);
+            });
+
+            this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+
+                graphics.clear();
+                graphics.lineStyle(2, 0xffff00);
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+                gameObject.setScale(1);
+                console.log("Leave");
+            });
+
+            this.input.on('drop', function (pointer, gameObject, dropZone) {
+
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y;
+               
+                console.log("dropZone x :"+dropZone.x+"dropZone y :"+dropZone.y);
+                if((dropZone==zone)&& (gameObject==bunny))
+                {
+                    console.log("zone"); 
+                    gameObject.input.enabled = false;
+                }
+                else 
+                {
+                    console.log("zone1");
+                    gameObject.x = gameObject.input.dragStartX;
+                    gameObject.y = gameObject.input.dragStartY;
+                    gameObject.setScale(1);
+                }
+             
+               
+
+            });
+
+            this.input.on('dragend', function (pointer, gameObject, dropped) {
+
+                if (!dropped) {
+                    gameObject.x = gameObject.input.dragStartX;
+                    gameObject.y = gameObject.input.dragStartY;
+                    gameObject.setScale(1);
+                }
+
+                graphics.clear();
+                graphics.lineStyle(2, 0xffff00);
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+                
+            });
+
+
+
+
+        }
+
+        function update() {
+            if (this.input.activePointer.isDown) {
+                bunny.alpha = 1;
+
+
+            }
+            else {
+                bunny.alpha = 0.5;
+            }
+        }
+
+
+
+    </script>
 
 </body>
+
 </html>
