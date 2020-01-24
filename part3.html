@@ -30,16 +30,17 @@
 
         var game = new Phaser.Game(config);
         var bunny;
-        var test=false;
-        var table = new Array(false,false,false,false,false);
+        var test = false;
+        var table = new Array(false, false, false, false, false);
+
         function preload() {
             this.load.image('sky', 'assets/sky.jpg');
             this.load.image('bunny', 'assets/bunny.jpg');
-            this.load.image('mult','assets/mult.jpg');
-            this.load.image('eye','assets/eye.png');
-            this.load.image('omo','assets/omo.jpg');
-            this.load.image('dear','assets/dear.jpg');
-            this.load.image('pub','assets/pub.png');
+            this.load.image('mult', 'assets/mult.jpg');
+            this.load.image('eye', 'assets/eye.png');
+            this.load.image('omo', 'assets/omo.jpg');
+            this.load.image('dear', 'assets/dear.jpg');
+            this.load.image('pub', 'assets/pub.png');
 
 
         }
@@ -47,59 +48,71 @@
         function create() {
             //set scale
             sky = this.add.image(620, 200, 'sky');
-           
-        
 
-
-           
-           //ajout de l'image "mult"
+            //ajout de l'image "mult"
             mult = this.add.sprite(380, 420, 'mult').setInteractive();
-            mult.alpha=0.6;
+            mult.alpha = 0.6;
             this.input.setDraggable(mult);
-                  //ajout de l'image "eye"
-                  eye = this.add.sprite(1100, 310, 'eye').setInteractive();
-           eye.setScale(0.7);
+            //ajout de l'image "eye"
+            eye = this.add.sprite(1100, 310, 'eye').setInteractive();
+            eye.setScale(0.7);
             this.input.setDraggable(eye);
             eye.alpha = 0.7;
-
-     
-          
-             //ajout de l'image "dear"
-             dear = this.add.sprite(600, 310, 'dear').setInteractive();
-           
+            //ajout de l'image "dear"
+            dear = this.add.sprite(600, 310, 'dear').setInteractive();
             this.input.setDraggable(dear);
             dear.setScale(0.5);
-            dear.alpha=0.9;
-             //ajout de la pub
+            dear.alpha = 0.9;
+            //ajout de la pub
             pub = this.add.sprite(376, 110, 'pub');
             pub.setScale(0.48);
-              //ajout de l'image "omo"
-              omo = this.add.sprite(310, 125, 'omo').setInteractive();
+            //ajout de l'image "omo"
+            omo = this.add.sprite(310, 125, 'omo').setInteractive();
             omo.alpha = 0.8;
             this.input.setDraggable(omo);
             omo.setScale(0.5);
             //ajout de l'image "bunny"
             bunny = this.add.sprite(60, 320, 'bunny').setInteractive();
             this.input.setDraggable(bunny);
-           
-            
 
 
-            
+
+
+
 
             //drag only 
             //  The pointer has to move 16 pixels before it's considered as a drag
             this.input.dragDistanceThreshold = 16;
 
-        
+
 
             //  A drop zone
-            var zone1= this.add.zone(400, 600, 200, 200).setRectangleDropZone(200, 200);
+            var zone1 = this.add.zone(400, 600, 200, 200).setRectangleDropZone(200, 200);
             var zone2 = this.add.zone(700, 600, 200, 200).setRectangleDropZone(200, 200);
-            var zone3=this.add.zone(1000, 600, 200, 200).setRectangleDropZone(200, 200);
-            var zone=this.add.zone(120, 600, 200, 200).setRectangleDropZone(200, 200);
-            var zone4=this.add.zone(1300, 600, 200, 200).setRectangleDropZone(200, 200);
-
+            var zone3 = this.add.zone(1000, 600, 200, 200).setRectangleDropZone(200, 200);
+            var zone = this.add.zone(120, 600, 200, 200).setRectangleDropZone(200, 200);
+            var zone4 = this.add.zone(1300, 600, 200, 200).setRectangleDropZone(200, 200);
+            var dico1 = {
+                zone: bunny,
+                zone1: mult,
+                zone2: eye,
+                zone3: omo,
+                zone4: dear
+            };
+            var dico2 = {
+                zone: null,
+                zone1: null,
+                zone2: null,
+                zone3: null,
+                zone4: null
+            };
+            var dico3 = {
+                'bunny': (bunny.dragStartX, bunny.dragStartY),
+                'mult': (mult.dragStartX, mult.dragStartY),
+                'eye': (eye.dragStartX, eye.dragStartY),
+                'omo': (omo.dragStartX, omo.dragStartY),
+                'dear': (dear.dragStartX, dear.dragStartY)
+            };
 
             //  Just a visual display of the drop zone
             var graphics = this.add.graphics();
@@ -127,25 +140,27 @@
             this.input.on('dragenter', function (pointer, gameObject, dropZone) {
 
                 graphics.clear();
-                graphics.lineStyle(2,0x0000ff);
+                graphics.lineStyle(2, 0x0000ff);
                 graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
                 graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
                 graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
                 graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
                 graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
-              var w=gameObject.width;
-              var h=gameObject.height;
-              var r1=w/200;
-              var r2=h/200;
-              if (w>h){
-                gameObject.setScale(1/r1,1/r1);
-              }
-              else if(h>w)
-              {gameObject.setScale(1/r2,1/r2);}
-              else 
-              gameObject.setScale(1);
-              
-                console.log("Enter zone :"+pointer.x);
+                var w = gameObject.width;
+                var h = gameObject.height;
+                var r1 = w / 200;
+                var r2 = h / 200;
+                if (w > h) {
+                    gameObject.setScale(1 / r1, 1 / r1);
+                }
+                else if (h > w) { gameObject.setScale(1 / r2, 1 / r2); }
+                /*else 
+                gameObject.setScale(1);*/
+
+                console.log("Enter zone :" + pointer.x);
+
+
+
             });
 
             this.input.on('dragleave', function (pointer, gameObject, dropZone) {
@@ -158,29 +173,70 @@
                 graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
                 gameObject.setScale(1);
                 console.log("Leave");
+
             });
 
             this.input.on('drop', function (pointer, gameObject, dropZone) {
 
                 gameObject.x = dropZone.x;
                 gameObject.y = dropZone.y;
-               
-               console.log("dropZone x :"+dropZone.x+"dropZone y :"+dropZone.y);
-              
-             if((dropZone==zone)&& (gameObject==bunny))
-              {table[0]=true;}
-             if ((dropZone==zone1)&& (gameObject==mult))
-            {table[1]=true;}
 
-             if ((dropZone==zone2)&& (gameObject==eye))
-             {table[2]=true;}
-            if ((dropZone==zone3)&& (gameObject==omo))  
-            {table[3]=true;}
-            if((dropZone==zone4)&& (gameObject==dear))
-            {table[4]=true;}
-            
+                /*   console.log("dropZone x :"+dropZone.x+"dropZone y :"+dropZone.y);
+                   console.log(gameObject.x);
+                      console.log(gameObject.y);
+                      console.log(dropZone.x);
+                      console.log(dropZone.y);
+                      console.log(dico2[gameObject]);
+                      //dico2[gameObject]=dropZone;
+                      console.log(dico2[gameObject]);
+                      console.log(dico1.zone);
+                      console.log(dico1.zone1);
+                      console.log(getKeyByValue(dico1,omo));
+                      console.log(dico3[dico2[bunny]]);
+                      if(getKeyByValue(dico1,omo)=="zone3")
+                      {
+                        console.log("yes");   
+                      }
+                      else
+                      {
+                        console.log("no"); 
+                      }
+                      console.log(dico1[bunny]);*/
+                if ((dropZone == zone) && (gameObject == bunny)) { table[0] = true; }
+                if ((dropZone == zone1) && (gameObject == mult)) { table[1] = true; }
 
-        
+                if ((dropZone == zone2) && (gameObject == eye)) { table[2] = true; }
+                if ((dropZone == zone3) && (gameObject == omo)) { table[3] = true; }
+                if ((dropZone == zone4) && (gameObject == dear)) { table[4] = true; }
+                var position = (gameObject.x, gameObject.y);
+                var pos = (dropZone.x, dropZone.y);
+
+
+                if (dico2.dropZone == "undefined") {
+                    dico2.dropZone = gameObject;
+                    gameObject.x = dropZone.x;
+                    gameObject.y = dropZone.y;
+                }
+
+                else if (getKeyByValue(dico2, gameObject) == undefined) {
+                    dico2.dropZone.position = dico2.dico3.dropZone;
+                    console.log("la position est:"+gameObject.position);
+                    console.log(dropeZone.pos);
+
+
+                    dico2.dropZone = gameObject;
+                    gameObject.position = dropZone.pos;
+                }
+                else if (getKeyByValue(dico2, gameObject) !== "undefined") {
+                    aux = gameObject.position;
+                    dico2.dropZone = aux;
+                    gameObject.position = dropZone.pos;
+
+
+                }
+                else console.log("404 not found");
+
+
             });
 
             this.input.on('dragend', function (pointer, gameObject, dropped) {
@@ -190,30 +246,56 @@
                     gameObject.y = gameObject.input.dragStartY;
                     gameObject.setScale(1);
                 }
-         
+
                 graphics.clear();
-                var compteur=0;
-                for(var i=0;i<table.length;i++)
-                {
-                    if(table[i]==true)
-                    {
+                var compteur = 0;
+                for (var i = 0; i < table.length; i++) {
+                    if (table[i] == true) {
                         compteur++;
                     }
-                   
+
                 }
-                if(compteur==5)
-                    {
-                        graphics.lineStyle(2,0x00ff00);
-                    }
-                    else 
-                    {graphics.lineStyle(2,0xff0000);}
-                        graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
-                        graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
-                        graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
-                        graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
-                        graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
-                        
-                    });
+                if (compteur == 5) {
+                    graphics.lineStyle(2, 0x00ff00);
+                }
+                else { graphics.lineStyle(2, 0xff0000); }
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+
+                /* if(dico2[gameObject]!==undefined){
+                       dico2[dropZone]=gameObject;
+                       gameObject.x=dropZone.x;
+                       console.log(dico2[dropZone].value);
+                       console.log("dropZone x :"+gameObject.x+"dropZone y :"+gameObject.y);}
+                       
+                    else if(dico2[gameObject]==undefined){
+                   dico2[dropZone].=dico3[dico2[dropZone]];
+                   console.log(dico3[dico2[dropZone]]);
+                   dico2[dropZone]=gameObject;
+                   gameObject.x=dropZone.x;
+                        }
+                   else if(dico2[gameObject]!==undefined){
+                       aux=gameObject.x;
+                       dico2[dropZone].x=aux;
+                       gameObject.x=dropZone.x;
+                   
+                   }
+                   else console.log("404 not found");
+                   match = True*/
+                //comparer les dictionnaires 
+                /* for  keys in dict1:
+                  if dict1[keys] != dict2[keys]:
+                  match = False
+                  print keys
+                  print dict1[keys],
+                  print  '->' ,
+                  print dict2[keys]*/
+
+
+            });
 
 
 
@@ -221,7 +303,10 @@
         }
 
         function update() {
-          
+
+        }
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
         }
 
 
