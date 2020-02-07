@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 3</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script type="text/javascript">
+
+        var config = {
+            type: Phaser.AUTO,
+            width: 2048,
+            height: 768,
+
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        var game = new Phaser.Game(config);
+        var women;
+        var test = false;
+        var table = new Array(false, false, false, false);
+        var winnigSequence = ["no2", "women", "no", "cry"]
+        function preload() {
+            this.load.image('sky', 'assets/sky.jpg');
+            this.load.image('women', 'assets/women.png');
+            this.load.image('cry', 'assets/cry.png');
+            this.load.image('glass', 'assets/glass.png');
+            this.load.image('statue', 'assets/statue.png');
+            this.load.image('eyes', 'assets/eyes.png');
+            this.load.image('no2', 'assets/no2.png');
+            this.load.image('no', 'assets/no.png');
+            this.load.image('winner','assets/winner.png');
+
+            this.load.audio('theme', [
+        'assets/oedipus_wizball_highscore.ogg',
+        'assets/oedipus_wizball_highscore.mp3'
+    ]);
+   
+
+
+        }
+
+        function create() {
+            //set scale
+            sky = this.add.image(620, 200, 'sky');
+            statue = this.add.image(60, 320, 'statue');
+            winner=this.add.image(750,330,'winner');
+            winner.alpha=0;
+            /*eyes=this.add.image(850,300,'eyes');
+            eyes.alpha=0.9;*/
+            var music = this.sound.add('theme');
+            
+
+
+
+
+
+            //ajout de l'image "no2"
+            no2 = this.add.sprite(1460, 200, 'no2').setInteractive();
+            no2.name = 'no2'
+            no2.initialX = 1460
+            no2.initialY = 200
+            no2.alpha = 0.9;
+            this.input.setDraggable(no2);
+
+
+            //ajout de l'image "cry"
+            cry = this.add.sprite(370, 100, 'cry').setInteractive();
+            cry.name = 'cry'
+            cry.initialX = 310
+            cry.initialY = 110
+            cry.alpha = 0.9;
+            this.input.setDraggable(cry);
+
+
+
+
+
+            //ajout de l'image "no"
+            no = this.add.sprite(380, 420, 'no').setInteractive();
+            no.name = 'no'
+            no.initialX = 380
+            no.initialY = 420
+            no.alpha = 0.7;
+
+            this.input.setDraggable(no);
+
+
+
+
+            //ajout de l'image "women"
+            women = this.add.sprite(660, 337, 'women').setInteractive();
+            women.name = 'women'
+            women.initialX = 660
+            women.initialY = 337
+            this.input.setDraggable(women);
+
+
+
+
+
+
+
+            //drag only 
+            //  The pointer has to move 16 pixels before it's considered as a drag
+            this.input.dragDistanceThreshold = 16;
+
+
+
+            //  A drop zone
+            var zone = this.add.zone(120, 600, 200, 200).setRectangleDropZone(200, 200);
+            zone.iteminsideBool = false;
+            zone.id = 0
+            var zone1 = this.add.zone(400, 600, 200, 200).setRectangleDropZone(200, 200);
+            zone1.iteminsideBool = false;
+            zone1.id = 1
+            var zone2 = this.add.zone(700, 600, 200, 200).setRectangleDropZone(200, 200);
+            zone2.iteminsideBool = false;
+            zone2.id = 2
+            var zone3 = this.add.zone(1000, 600, 200, 200).setRectangleDropZone(200, 200);
+            zone3.iteminsideBool = false;
+            zone3.id = 3
+
+            // var dropZoneArray = {
+            //     zone0: zone,
+            //     zone1: zone1,
+            //     zone2: zone2,
+            //     zone3: zone3,
+            //     zone4: zone4,
+            // }
+            var dropZoneArray = [zone, zone1, zone2, zone3]
+            var dico1 = {
+                zone: no2,
+                zone1: no,
+                zone2: women,
+                zone3: cry,
+            };
+            var dico2 = {
+                zone: null,
+                zone1: null,
+                zone2: null,
+                zone3: null,
+            };
+            var dico3 = {
+                'no2': (no2.dragStartX, no2.dragStartY),
+                'women': (women.dragStartX, women.dragStartY),
+                'no': (no.dragStartX, no.dragStartY),
+                'cry': (cry.dragStartX, cry.dragStartY),
+
+
+            };
+            console.log("dico1", dico1)
+            console.log("dico3", dico3)
+            console.log("dropZone", dropZoneArray)
+            //  Just a visual display of the drop zone
+            var graphics = this.add.graphics();
+
+            graphics.lineStyle(2, 0x0000ff);
+            graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+            graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+            graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+            graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+            this.input.on('dragstart', function (pointer, gameObject) {
+
+                this.children.bringToTop(gameObject);
+
+            }, this);
+
+            this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+                console.log('drag')
+                gameObject.x = dragX;
+                gameObject.y = dragY;
+
+            });
+
+            this.input.on('dragenter', function (pointer, gameObject, dropZone) {
+                console.log('dragenter')
+                graphics.clear();
+                graphics.lineStyle(2, 0x0000ff);
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                var w = gameObject.width;
+                var h = gameObject.height;
+                var r1 = w / 200;
+                var r2 = h / 200;
+                if (w > h) {
+                    gameObject.setScale(1 / r1, 1 / r1);
+                }
+                else if (h > w) { gameObject.setScale(1 / r2, 1 / r2); }
+                /*else 
+                gameObject.setScale(1);*/
+
+                console.log("Enter zone :" + pointer.x);
+
+
+
+            });
+
+            this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+                console.log('dragleave')
+                graphics.clear();
+                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height); gameObject.setScale(1);
+                console.log("Leave");
+
+            });
+
+
+
+            this.input.on('drop', function (pointer, gameObject, dropZone) {
+                console.log('drop')
+                console.log(gameObject)
+                console.log(dropZone)
+               
+                if (!dropZone.iteminsideBool) {
+
+                    dropZone.iteminsideBool = true
+
+                } else {
+                    if (gameObject.dropZone != null) {
+                        console.log('we are here')
+                        console.log(gameObject)
+
+                        var initialDropZone = dropZoneArray.find(element => element.id == gameObject.dropZone);
+                        dropZone.iteminside.x = initialDropZone.x
+                        dropZone.iteminside.y = initialDropZone.y
+                        dropZone.iteminside.dropZone = gameObject.dropZone
+                        initialDropZone.iteminside = dropZone.iteminside
+                        console.log(dropZone)
+                    } else {
+                        dropZone.iteminside.x = dropZone.iteminside.initialX
+                        dropZone.iteminside.y = dropZone.iteminside.initialY
+                        dropZone.iteminside.dropZone = null
+                    }
+
+
+                }
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y;
+                gameObject.dropZone = dropZone.id
+                dropZone.iteminside = gameObject
+                dropZone.iteminsideName = gameObject.name
+                dropZone.iteminside = gameObject
+                dropZone.iteminsideName = gameObject.name
+
+                
+
+                var score = 0;
+                for (var i = 0; i < dropZoneArray.length; i++) {
+                    if (dropZoneArray[i].iteminside != null) {
+                        if (dropZoneArray[i].iteminside.name == winnigSequence[i]) {
+                            score++
+                        }
+                    }
+                    console.log(score);
+                }
+                if (score == 4) {
+                    console.log('yaaaaaaaaay you won')
+                    winner.alpha=1;
+                     music.play();
+                    graphics.lineStyle(2, 0x00ff00);
+                    graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                    graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                    graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                    graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                                }
+
+
+                    
+
+
+            });
+
+            this.input.on('dragend', function (pointer, gameObject, dropped) {
+                console.log('dragend')
+                // if (!dropped) {
+                //     gameObject.x = gameObject.input.dragStartX;
+                //     gameObject.y = gameObject.input.dragStartY;
+                //     gameObject.setScale(1);
+                // }
+
+                // graphics.clear();
+                // var compteur = 0;
+                // for (var i = 0; i < table.length; i++) {
+                //     if (table[i] == true) {
+                //         compteur++;
+                //     }
+
+                // }
+                // if (compteur == 5) {
+                //     graphics.lineStyle(2, 0x00ff00);
+                // }
+                // else { graphics.lineStyle(2, 0xff0000); }
+                // graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                // graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                // graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                // graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                // graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+                /* if(dico2[gameObject]!==undefined){
+                       dico2[dropZone]=gameObject;
+                       gameObject.x=dropZone.x;
+                       console.log(dico2[dropZone].value);
+                       console.log("dropZone x :"+gameObject.x+"dropZone y :"+gameObject.y);}
+                       
+                    else if(dico2[gameObject]==undefined){
+                   dico2[dropZone].=dico3[dico2[dropZone]];
+                   console.log(dico3[dico2[dropZone]]);
+                   dico2[dropZone]=gameObject;
+                   gameObject.x=dropZone.x;
+                        }
+                   else if(dico2[gameObject]!==undefined){
+                       aux=gameObject.x;
+                       dico2[dropZone].x=aux;
+                       gameObject.x=dropZone.x;
+                   
+                   }
+                   else console.log("404 not found");
+                   match = True*/
+                //comparer les dictionnaires 
+                /* for  keys in dict1:
+                  if dict1[keys] != dict2[keys]:
+                  match = False
+                  print keys
+                  print dict1[keys],
+                  print  '->' ,
+                  print dict2[keys]*/
+
+
+            });
+
+
+
+
+        }
+
+        function update() {
+
+        }
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>

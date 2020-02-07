@@ -32,7 +32,7 @@
         var bunny;
         var test = false;
         var table = new Array(false, false, false, false, false);
-
+        var winnigSequence=["bunny","mult","eye","omo","dear"]
         function preload() {
             this.load.image('sky', 'assets/sky.jpg');
             this.load.image('bunny', 'assets/bunny.jpg');
@@ -132,13 +132,14 @@
             var zone4 = this.add.zone(1300, 600, 200, 200).setRectangleDropZone(200, 200);
             zone4.iteminsideBool = false;
             zone4.id = 4
-            var dropZoneArray = {
-                zone0: zone,
-                zone1: zone1,
-                zone2: zone2,
-                zone3: zone3,
-                zone4: zone4,
-            }
+            // var dropZoneArray = {
+            //     zone0: zone,
+            //     zone1: zone1,
+            //     zone2: zone2,
+            //     zone3: zone3,
+            //     zone4: zone4,
+            // }
+            var dropZoneArray = [zone,zone1,zone2,zone3,zone4]
             var dico1 = {
                 zone: bunny,
                 zone1: mult,
@@ -229,78 +230,58 @@
 
             this.input.on('drop', function (pointer, gameObject, dropZone) {
                 console.log('drop')
-                if(!dropZone.iteminsideBool){
-                    gameObject.x = dropZone.x;
-                    gameObject.y = dropZone.y;
-                    dropZone.iteminsideBool = true //////
-                    dropZone.iteminside = gameObject
-                    dropZone.iteminsideName = gameObject.name
-                } else {
-                    console.log('dropZone.iteminside')
-                    console.log(dropZone.iteminside)
-                    dropZone.iteminside.x = dropZone.iteminside.initialX
-                    dropZone.iteminside.y = dropZone.iteminside.initialY
-                }
-                
-                console.log(pointer)
                 console.log(gameObject)
-                console.log('dropZone', dropZone)
-                console.log('dropZoneArray', dropZoneArray)
-                /*   console.log("dropZone x :"+dropZone.x+"dropZone y :"+dropZone.y);
-                   console.log(gameObject.x);
-                      console.log(gameObject.y);
-                      console.log(dropZone.x);
-                      console.log(dropZone.y);
-                      console.log(dico2[gameObject]);
-                      //dico2[gameObject]=dropZone;
-                      console.log(dico2[gameObject]);
-                      console.log(dico1.zone);
-                      console.log(dico1.zone1);
-                      console.log(getKeyByValue(dico1,omo));
-                      console.log(dico3[dico2[bunny]]);
-                      if(getKeyByValue(dico1,omo)=="zone3")
-                      {
-                        console.log("yes");   
-                      }
-                      else
-                      {
-                        console.log("no"); 
-                      }
-                      console.log(dico1[bunny]);*/
-                if ((dropZone == zone) && (gameObject == bunny)) { table[0] = true; }
-                if ((dropZone == zone1) && (gameObject == mult)) { table[1] = true; }
+                console.log(dropZone)
+                if (!dropZone.iteminsideBool) {
 
-                if ((dropZone == zone2) && (gameObject == eye)) { table[2] = true; }
-                if ((dropZone == zone3) && (gameObject == omo)) { table[3] = true; }
-                if ((dropZone == zone4) && (gameObject == dear)) { table[4] = true; }
-                var position = (gameObject.x, gameObject.y);
-                // var pos = (dragX,dragY);
+                    dropZone.iteminsideBool = true
 
-
-                /*if (dico2.dropZone == undefined) {
-                    dico2.dropZone = gameObject;
-                    gameObject.x = dropZone.x;
-                    gameObject.y = dropZone.y;
-                }
-
-                else if (getKeyByValue(dico2, gameObject) == undefined) {
-                    dico2.dropZone = dico3.dico2;
-                    console.log("la position est:"+gameObject.position);
-                    console.log(dropZone.pos);
-
-
-                    dico2.dropZone = gameObject;
-                    gameObject.position = dropZone.pos;
-                }
-                else if (getKeyByValue(dico2, gameObject) !== undefined) {
-                    aux = gameObject.position;
-                    dico2.dropZone = aux;
-                    gameObject.position = dropZone.pos;
-                    console.log("laux est:"+aux);
-
+                } else {
+                    if(gameObject.dropZone!=null){
+                        console.log('we are here')
+                        console.log(gameObject)
+                        
+                        var initialDropZone = dropZoneArray.find(element => element.id == gameObject.dropZone);
+                        dropZone.iteminside.x = initialDropZone.x
+                        dropZone.iteminside.y = initialDropZone.y
+                        dropZone.iteminside.dropZone = gameObject.dropZone
+                        initialDropZone.iteminside = dropZone.iteminside
+                        console.log(dropZone)
+                    } else {
+                        dropZone.iteminside.x = dropZone.iteminside.initialX
+                        dropZone.iteminside.y = dropZone.iteminside.initialY
+                        dropZone.iteminside.dropZone = null
+                    }
+                    
 
                 }
-                else console.log("404 not found");*/
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y;
+                gameObject.dropZone = dropZone.id
+                dropZone.iteminside = gameObject
+                dropZone.iteminsideName = gameObject.name
+                dropZone.iteminside = gameObject
+                dropZone.iteminsideName = gameObject.name
+
+
+
+                var score = 0;
+                for(var i=0;i<dropZoneArray.length;i++){
+                    if(dropZoneArray[i].iteminside!=null){
+                        if(dropZoneArray[i].iteminside.name == winnigSequence[i]){
+                            score++
+                        }
+                    }
+                }
+                if(score==5){
+                    console.log('yaaaaaaaaay you won')
+                    graphics.lineStyle(2, 0x00ff00);
+                    graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
+                }
 
 
 
@@ -310,31 +291,29 @@
 
             this.input.on('dragend', function (pointer, gameObject, dropped) {
                 console.log('dragend')
-                if (!dropped) {
-                    gameObject.x = gameObject.input.dragStartX;
-                    gameObject.y = gameObject.input.dragStartY;
-                    gameObject.setScale(1);
-                }
+                // if (!dropped) {
+                //     gameObject.x = gameObject.input.dragStartX;
+                //     gameObject.y = gameObject.input.dragStartY;
+                //     gameObject.setScale(1);
+                // }
 
-                graphics.clear();
-                var compteur = 0;
-                for (var i = 0; i < table.length; i++) {
-                    if (table[i] == true) {
-                        compteur++;
-                    }
+                // graphics.clear();
+                // var compteur = 0;
+                // for (var i = 0; i < table.length; i++) {
+                //     if (table[i] == true) {
+                //         compteur++;
+                //     }
 
-                }
-                if (compteur == 5) {
-                    graphics.lineStyle(2, 0x00ff00);
-                }
-                else { graphics.lineStyle(2, 0xff0000); }
-                graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
-                graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
-                graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
-                graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
-                graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
-                console.log('dico2 after drag')
-                console.log(dico2)
+                // }
+                // if (compteur == 5) {
+                //     graphics.lineStyle(2, 0x00ff00);
+                // }
+                // else { graphics.lineStyle(2, 0xff0000); }
+                // graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+                // graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
+                // graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
+                // graphics.strokeRect(zone3.x - zone3.input.hitArea.width / 2, zone3.y - zone3.input.hitArea.height / 2, zone3.input.hitArea.width, zone3.input.hitArea.height);
+                // graphics.strokeRect(zone4.x - zone4.input.hitArea.width / 2, zone4.y - zone4.input.hitArea.height / 2, zone4.input.hitArea.width, zone4.input.hitArea.height);
                 /* if(dico2[gameObject]!==undefined){
                        dico2[dropZone]=gameObject;
                        gameObject.x=dropZone.x;
