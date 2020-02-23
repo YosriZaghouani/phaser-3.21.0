@@ -41,6 +41,8 @@
             this.load.image('omo', 'assets/omo.jpg');
             this.load.image('dear', 'assets/dear.jpg');
             this.load.image('pub', 'assets/pub.png');
+            this.load.image('winner','assets/winner.png');
+
 
 
         }
@@ -94,6 +96,9 @@
             omo.alpha = 0.8;
             this.input.setDraggable(omo);
             omo.setScale(0.5);
+
+            winner=this.add.image(750,330,'winner');
+            winner.alpha=0;
 
 
 
@@ -276,6 +281,7 @@
                 if(score==5){
                     console.log('yaaaaaaaaay you won')
                     graphics.lineStyle(2, 0x00ff00);
+                    winner.alpha=1;
                     graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
                 graphics.strokeRect(zone1.x - zone1.input.hitArea.width / 2, zone1.y - zone1.input.hitArea.height / 2, zone1.input.hitArea.width, zone1.input.hitArea.height);
                 graphics.strokeRect(zone2.x - zone2.input.hitArea.width / 2, zone2.y - zone2.input.hitArea.height / 2, zone2.input.hitArea.width, zone2.input.hitArea.height);
