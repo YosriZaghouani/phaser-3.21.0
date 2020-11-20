@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Space - Moving Stars</title>
+<!--css-->
+<link rel="stylesheet" href="style2.css">
+<link rel="stylesheet" href="bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <!--font-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700&display=swap" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Electrolize&display=swap" rel="stylesheet">    <link href="https://fonts.googleapis.com/css?family=Lobster|Permanent+Marker|Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <!--Font-->
+    <!--adapter la resolution sur tout les 	appareil-->
+    <meta name="viewport" content="width=device-width , user-scalable=no , initial-scale=1">
+    <!--adapter la resolution sur tout les 	appareil-->
+</head>
+<body>
+    <div>
+		<img src="escape room.png"  style="margin-top: 100px;margin-left:620px;position:absolute;size: 250%; "></img>
+   <form action="insert.php" method="POST" class="headin-subtitle" >
+	<table>
+	 <tr>
+	  <td>Name :</td>
+	  <td><input type="text" style="color: black;" name="username" required></td>
+	 </tr>
+	 <tr>
+	  <td>Password :</td>
+	  <td><input type="password" style="color: black;" name="password" required></td>
+	 </tr>
+	 <tr>
+	  <td>Gender :</td>
+	  <td>
+	   <input type="radio" style="color: black;" name="gender" value="m" required>Male
+	   <input type="radio" style="color: black;" name="gender" value="f" required>Female
+	  </td>
+	 </tr>
+	 <tr>
+	  <td>Email :</td>
+	  <td><input type="email" style="color: black;" name="email" required></td>
+	 </tr> 
+	 <tr>
+	  <td>Phone n° :</td>
+	  <td>
+	   <select name="phoneCode" style="color: black;" required>
+		<option selected hidden value="">Select Code</option>
+		<option value="+216">+216</option>
+		<option value="+00">+00</option>
+	   </select>
+	   <input type="phone" name="phone" style="color: black;" required>
+	  </td>
+	 </tr>
+	 <tr>
+	  <td><input type="submit" value="Submit"  style="color: black;" ></td>
+	 </tr>
+	</table>
+   </form>
+   
+   </div>
+
+    <canvas id="space_box" style="background:#0000; width: 100%; height:130%;"></canvas>
+
+<script type="text/javascript">
+var canvas = document.getElementById('space_box');
+var c = canvas.getContext('2d');
+
+var innerWidth = window.innerWidth - 20,
+    innerHeight = window.innerHeight - 20,
+	radius = 1,
+	starsIndex = 0,
+	stars = [],
+	TWO_PI = Math.PI*2,
+	centerX = innerWidth/2,
+	centerY = innerHeight/2,
+	focalLength = 100,
+	starRadius = null,
+	starX = null,
+	starY = null,
+	numStars = 2000,
+	mouse = {},
+	starX_dir = 0,
+	starY_dir = 0;
+
+	canvas.width = innerWidth;
+	canvas.height = innerHeight;
+	
+	
+// Move the stars with mouse pointer
+
+window.addEventListener('mousemove', function(e){
+   mouse.x = e.x;
+   mouse.y = e.y;
+   
+   if(mouse.x < centerX){
+     starX_dir += 5;
+   }else{
+     starX_dir += -5;
+   }
+   
+   if(mouse.y < centerY){
+     starY_dir += 5;
+   }else{
+     starY_dir += -5;
+   }
+   
+});
+
+// Zoom in/out 
+canvas.addEventListener('mousewheel', function(e){
+   if(e.deltaY < 0){
+     focalLength *= 1.1;
+   }else{
+     focalLength /= 1.1;
+   }
+   
+   if(focalLength >= innerWidth){
+     focalLength = innerWidth - 20;
+   }else if(focalLength < 100){
+     focalLength = 100;
+   }
+   
+}, false);
+
+	
+
+function star(x,y,z){
+    this.x = x;
+	this.y = y;
+	this.z = z;
+	this.radius = radius;
+	this.color = "#fff";
+	starsIndex++;
+	stars[starsIndex] = this;
+	this.id = starsIndex;
+	
+	// Animate Stars
+	this.update = function(){
+	  starX = (this.x - centerX) * (focalLength / this.z);
+	  starX += centerX;
+	  
+	  starY = (this.y - centerY) * (focalLength / this.z);
+	  starY += centerY;
+	  
+	  starRadius = radius * (focalLength / this.z);
+	  
+	  starX += starX_dir;
+	  starY += starY_dir;
+	  
+	  this.z += -10;
+	  
+	  if(this.z <= 0){
+	     this.z = parseInt(innerWidth);
+	  }
+	  
+	  this.draw();
+	
+	}
+	
+	// Function for draw star
+	this.draw = function(){
+		c.beginPath();
+		c.arc(starX,starY,starRadius, TWO_PI, false);
+		c.fillStyle = this.color;
+		c.fill();
+		c.closePath();
+	}
+	
+}	
+
+// X,Y,Z values
+var s;
+for(s = 0; s < numStars; s++){
+	x = Math.random() * innerWidth;
+	y = Math.random() * innerHeight;
+	z = Math.random() * innerWidth;
+	new star(x,y,z);
+}
+
+// Function for animate canvas objects
+function animate(){
+    requestAnimationFrame(animate);
+	c.fillStyle = "#000";
+	c.fillRect(0,0,innerWidth,innerHeight);
+	
+	for( var i in stars){
+	  stars[i].update();
+	}
+}
+
+animate();
+
+
+</script>
+
+
+</body>
+</html>

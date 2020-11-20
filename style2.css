@@ -1,0 +1,103 @@
+.b{position: absolute;
+margin-top: 480px;
+margin-left: 47%;
+color: blueviolet;
+opacity: 70%;
+}
+.headin-title{
+  position:absolute; 
+  color:white;
+  font-family: 'Electrolize', sans-serif;
+text-align: center;
+margin: 300px;
+margin-left: 28%;
+font-size: 8vh;
+}
+
+.headin-subtitle
+{
+margin-top: 400px;
+position:absolute; 
+color:white;
+font-family: 'Electrolize', sans-serif;
+text-align: center;
+margin-left: 30%;
+font-size: 3vh;
+}
+.card {
+   
+    position: relative;
+    display: inline-block;
+    
+}
+.card .img-top {
+    display: none;
+    position: absolute;
+    width: 550px;
+    height: 600px;
+
+}
+.card:hover  .img-top  {
+    display: inline;
+    width:506px;
+    height: 650px;
+    
+
+   
+
+ 
+}
+.c1
+{
+background-image: url('/img/ibck.jpg') ;
+background-size: 100% 100%;
+}
+
+
+.c1:hover
+{
+background-image: url('/img/ibck1.jpg') ;
+transition:1s;
+}
+
+.fade{
+    
+    animation-name:fade;
+    animation-duration:0.7s;
+    animation-fill-mode: forwards;
+    
+    
+    
+    }
+    
+    @keyframes fade{
+
+    from {opacity: 0.4;}
+    
+    to {opacity: 1;}
+    
+    }
+   
+      
+      .navbar-light .navbar-brand
+      {
+        color: #fff;
+        font-size: 25px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 2px;}
+     
+      
+      .navbar-nav{
+        text-align: center;
+      }
+      
+      .nav-link{
+        padding:.2rem 1;
+      }
+      
+      .nav-link .nav-link-active:focus{
+      
+      color:#fff;
+      
+      }
